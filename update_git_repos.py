@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from multiprocessing import pool
 import os
 import subprocess
 
@@ -47,15 +48,8 @@ with open(repo_file, 'r') as f:
         repo_name = repo[1]
         repositories.append((repo_base, repo_name))
 
-# Update/clone repos
-for repo in repositories:
-    repo_dir = base_dir + repo[0] + '/'
-    directory = repo_dir + repo[1] + '/'
-    if os.path.isdir(directory):
-        git_update(directory)
-    else:
-        repository = base_git + '/' + repo[0] + '/' + repo[1]
-        git_clone(repo_dir, repository)
+tpool = pool.ThreadPool(MAX_THREADS)
+tpool.map(update_or_clone, gen_repos(repositories))
 
 print('  --> Git repositories updated! Process finished.')
 

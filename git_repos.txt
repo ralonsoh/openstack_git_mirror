@@ -1,9 +1,10 @@
+# Repos to be mirrored
+#
 openstack/cinder.git
 openstack/glance.git
 openstack/horizon.git
 openstack/keystone.git
 openstack/neutron.git
-openstack/neutron-fwaas.git
 openstack/nova.git
 openstack/swift.git
 openstack/placement.git
@@ -71,4 +72,5 @@ openstack/os-apply-config.git
 openstack/os-collect-config.git
 openstack/os-refresh-config.git
 openstack/ironic-python-agent.git
+openstack/tripleo-heat-templates.git
 
