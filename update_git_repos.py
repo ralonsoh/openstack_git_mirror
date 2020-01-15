@@ -6,10 +6,11 @@ import os
 import subprocess
 
 
-# base_git = 'git://git.openstack.org'  # DEPRECATED
+# BASE_GIT = 'git://git.openstack.org'  # DEPRECATED
 BASE_GIT = 'https://opendev.org'
-BASE_DIR = '/opt/git_mirror/'
-#BASE_DIR = '/opt/stack/tmp/git_mirror/'
+# Where the repositories are stored.
+BASE_DIR, _ = os.path.split(os.path.abspath(__file__))
+BASE_DIR += '/'
 REPO_FILE = BASE_DIR + 'git_repos.txt'
 MAX_THREADS = 2
 
@@ -27,19 +28,19 @@ def _execute_commands(cmds, directory, action):
 
 
 def _git_update(repo_dir):
-    print('Updating %s' % repo_dir)
+    print('--> Updating %s' % repo_dir)
     cmds = [['git', 'fetch', 'origin']]
     return _execute_commands(cmds, repo_dir, 'update')
 
 
 def _git_clone(repo_base_dir, repository):
-    print('Cloning %s' % repository)
+    print('--> Cloning %s' % repository)
     cmds = [['git', 'clone', '--mirror', repository]]
     return _execute_commands(cmds, repo_base_dir, 'clone')
 
 
 def _remove_directory(repo_dir):
-    print('Removing %s' % repo_dir)
+    print('--> Removing %s' % repo_dir)
     cmds = [['rm', '-fr', repo_dir]]
     return _execute_commands(cmds, None, 'clone')
 
@@ -54,6 +55,8 @@ def update_or_clone(*args):
         _remove_directory(repo_dir)
 
     if not os.path.isdir(repo_dir):
+        if not os.path.isdir(repo_base_dir):
+            os.mkdir(repo_base_dir)
         _git_clone(repo_base_dir, repository)
 
 
@@ -65,7 +68,7 @@ def gen_repos(repositories):
         yield repository, repo_base_dir, repo_dir
 
 
-print('  --> Updating/cloning repositories.')
+print('Updating/cloning repositories.')
 
 # Read repo list
 repositories = []
@@ -84,5 +87,4 @@ with open(REPO_FILE, 'r') as f:
 tpool = pool.ThreadPool(MAX_THREADS)
 tpool.map(update_or_clone, gen_repos(repositories))
 
-print('  --> Git repositories updated! Process finished.')
-
+print('Git repositories updated! Process finished.')

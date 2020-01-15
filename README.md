@@ -5,6 +5,9 @@ This project contains a small script to replicate locally the needed OpenStack
 git repositories. This script can be executed periodically to update the
 repository list (file "git_repos.txt").
 
+The OpenStack repositories will be stored in the same directory of this
+project, where the Python script and the repository list are located.
+
 Crontab example:
 ```
   # Update git repos
