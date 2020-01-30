@@ -11,8 +11,7 @@ openstack-dev/devstack.git
 openstack-dev/pbr.git
 openstack/dib-utils.git
 openstack/diskimage-builder.git
-openstack/elastic-recheck.git
-openstack/election-recheck.git
+openstack/election.git
 openstack/futurist.git
 openstack/glance.git
 openstack/glance_store.git
