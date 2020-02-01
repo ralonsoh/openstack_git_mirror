@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import functools
+import multiprocessing
 from multiprocessing import pool
 import os
 import subprocess
@@ -45,18 +47,19 @@ def _remove_directory(repo_dir):
     return _execute_commands(cmds, None, 'clone')
 
 
-def update_or_clone(*args):
-    repository, repo_base_dir, repo_dir = tuple(*args)
+def update_or_clone(_lock, *repo_tuple):
+    repository, repo_base_dir, repo_dir = tuple(*repo_tuple)
     res = None
-    if os.path.isdir(repo_dir):
+    if os.path.exists(repo_dir):
         res = _git_update(repo_dir)
 
     if res is False:
         _remove_directory(repo_dir)
 
-    if not os.path.isdir(repo_dir):
-        if not os.path.isdir(repo_base_dir):
-            os.mkdir(repo_base_dir)
+    if not os.path.exists(repo_dir):
+        with _lock:
+            if not os.path.exists(repo_base_dir):
+                os.mkdir(repo_base_dir)
         _git_clone(repo_base_dir, repository)
 
 
@@ -84,7 +87,9 @@ with open(REPO_FILE, 'r') as f:
         repo_name = repo[1]
         repositories.append((repo_base, repo_name))
 
+_lock = multiprocessing.Lock()
 tpool = pool.ThreadPool(MAX_THREADS)
-tpool.map(update_or_clone, gen_repos(repositories))
+_update_or_clone = functools.partial(update_or_clone, _lock)
+tpool.map(_update_or_clone, gen_repos(repositories))
 
 print('Git repositories updated! Process finished.')
