@@ -17,7 +17,7 @@ openstack/glance.git
 openstack/glance_store.git
 openstack/governance.git
 openstack/horizon.git
-openstack/irc-meetings.git
+opendev/irc-meetings.git
 openstack/ironic.git
 openstack/ironic-lib.git
 openstack/ironic-python-agent.git
